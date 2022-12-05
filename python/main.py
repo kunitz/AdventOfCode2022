@@ -53,9 +53,10 @@ def problem42():
     print(f'{count}')
 
 class P51_data():
-    def __init__(self, data):
+    def __init__(self, data, movemultiple = False):
         self.header = data[0]
         self.moves = data[1]
+        self.movemultiple = movemultiple
         self.parseHeader()
         self.executeMoves()
 
@@ -82,10 +83,20 @@ class P51_data():
         i = 0
         fromstack = fromstack - 1
         tostack = tostack - 1
-        while i < quantity:
-            i+=1
-            box = self.stack[fromstack].pop()
-            self.stack[tostack].append(box)
+        if self.movemultiple == True:
+            cratestack = []
+            while i < quantity:
+                i+=1
+                cratestack.append(self.stack[fromstack].pop())
+            i = 0
+            while i < quantity: 
+                self.stack[tostack].append(cratestack.pop())
+                i+=1
+        else:
+            while i < quantity:
+                i+=1
+                box = self.stack[fromstack].pop()
+                self.stack[tostack].append(box)
 
     def getCrates(self):
         crates = ''
@@ -108,12 +119,12 @@ class P51_data():
 
 
 
-def problem51():
-    data = P51_data(read_file('5-1.input').split('\n\n'))
+def problem51(part2 = False):
+    data = P51_data(read_file('5-1.input').split('\n\n'), part2)
     print(f'{data.getCrates()}')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    problem51()
+    problem51(True)
 
 
