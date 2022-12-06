@@ -123,8 +123,43 @@ def problem51(part2 = False):
     data = P51_data(read_file('5-1.input').split('\n\n'), part2)
     print(f'{data.getCrates()}')
 
+class problem61():
+    def __init__(self, part2 = False):
+        self.data = read_file('6-1.input')
+        self.buffer = []
+    
+    def compare_elements(self, list):
+        same = False
+        i = 0
+        x = list.pop()
+        if len(list) == 0:
+            return same
+        for y in list:
+            same = same or (x == y)
+        same = same or self.compare_elements(list.copy())
+        return same
+            
+    def test_compare(self):
+        buffer = ['a','b','c','c']
+        print(self.compare_elements(buffer))
+
+    def solve(self):
+        index = 1
+        for i in self.data:
+            self.buffer.insert(0,i)
+            if len(self.buffer) >= 4:
+                print(f'{self.buffer}')
+                if (self.compare_elements(self.buffer.copy()) == False):
+                    return index
+                self.buffer.pop()
+            index += 1
+        return -1
+    
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    problem51(True)
+    x = problem61()
+    #x.test_compare()
+    print(f'{x.solve()}')
 
 
