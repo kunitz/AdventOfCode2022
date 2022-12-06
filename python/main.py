@@ -124,9 +124,10 @@ def problem51(part2 = False):
     print(f'{data.getCrates()}')
 
 class problem61():
-    def __init__(self, part2 = False):
+    def __init__(self, buffersize = 4):
         self.data = read_file('6-1.input')
         self.buffer = []
+        self.buffersize = buffersize
     
     def compare_elements(self, list):
         same = False
@@ -147,7 +148,7 @@ class problem61():
         index = 1
         for i in self.data:
             self.buffer.insert(0,i)
-            if len(self.buffer) >= 4:
+            if len(self.buffer) >= self.buffersize:
                 print(f'{self.buffer}')
                 if (self.compare_elements(self.buffer.copy()) == False):
                     return index
@@ -158,7 +159,7 @@ class problem61():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    x = problem61()
+    x = problem61(14)
     #x.test_compare()
     print(f'{x.solve()}')
 
