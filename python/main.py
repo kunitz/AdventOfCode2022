@@ -155,12 +155,115 @@ class problem61():
                 self.buffer.pop()
             index += 1
         return -1
+
+class Folder():
+    def __init__(self, foldername):
+        self.files = dict()
+        self.folders = dict()
+        self.foldername = foldername
     
+    def addFile(self, filename, filesize):
+        self.files[filename] = int(filesize)
+
+    def addFolder(self, foldername):
+        self.folders[foldername] = Folder(foldername)
+    
+    def getFolders(self):
+        return self.folders
+
+    def getFolderSizeRecursive(self):
+        size = 0
+        for s in self.files.values():
+            size += s
+        for f in self.folders.values():
+            size += f.getFolderSizeRecursive()
+        return size
+
+
+class Filsystem():
+    def __init__(self):
+        self.tree = Folder('')
+        #self.tree['/'] = Folder('/')
+        self.currentpath = []
+        self.currentFolder().addFolder('/')
+
+    def currentFolder(self):
+        f = self.tree
+        for p in self.currentpath:
+            f = f.getFolders()[p]
+        return f
+
+    def currentPathString(self):
+        return self.buildPath(self.currentpath)
+    
+    def buildPath(path):
+        pathstring = ''
+        for p in path:
+            pathstring = pathstring + ' ' + p
+        return pathstring
+
+    def addFile(self, filename, filesize):
+        self.currentFolder().addFile(filename, filesize)
+    
+    def addDir(self, foldername):
+        self.currentFolder().addFolder(foldername)
+
+    def changeDir(self, foldername):
+        if foldername == '..':
+            self.currentpath.pop()
+        elif foldername == '/':
+            self.currentpath = ['/']
+        else:
+            if foldername in (self.currentFolder().getFolders()):
+                pass
+            else:            
+                self.currentFolder().addFolder(foldername)
+            self.currentpath.append(foldername)
+    
+
+class problem71():
+    def __init__(self):
+        self.data = read_file('7-1.input')
+        self.fs = Filsystem()
+        commands = self.data.split('\n')
+        for c in commands:
+            cmd = c.split(' ')
+            if cmd[0].isnumeric():
+                self.fs.addFile(cmd[1],cmd[0])
+            if cmd[0] == 'dir':
+                self.fs.addDir(cmd[1])
+            if cmd[0] == '$':
+                if cmd[1] == 'cd':
+                    self.fs.changeDir(cmd[2])
+    
+    def sumDirectorySizes(self, maxsize):
+        return self.directorySizes(maxsize, self.fs.tree)
+
+    def directorySizes(self, maxsize, folder):
+        count = 0
+        size = folder.getFolderSizeRecursive()
+        if size <= maxsize:
+            count += size
+        for f in folder.getFolders().values():
+            count += self.directorySizes(maxsize, f)
+        return count
+            
+    def testFilesystem(self):
+        fs = Filsystem()
+        fs.changeDir('/')
+        fs.addFile('abc', 123)
+        fs.addFile('def', 1234)
+        fs.addDir('test1')
+        fs.addDir('test2')
+        fs.changeDir('test2')
+        fs.addFile('xyz', 111)
+        fs.addFile('aaa', 22222)
+        #print(f'{fs.tree["/"]}')
+        
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    x = problem61(14)
-    #x.test_compare()
-    print(f'{x.solve()}')
-
+    x = problem71()
+    print(f'{x.sumDirectorySizes(100000)}')
+    #x.testFilesystem()
 
