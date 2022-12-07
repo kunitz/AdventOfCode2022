@@ -247,7 +247,34 @@ class problem71():
         for f in folder.getFolders().values():
             count += self.directorySizes(maxsize, f)
         return count
-            
+    
+    def findDirectoryToFreeUpSpace (self, minimum, folder):
+        size = folder.getFolderSizeRecursive()
+        folders = []
+        if size >= minimum:
+            for f in folder.getFolders().values():
+                if self.findDirectoryToFreeUpSpace(minimum, f) != 0:
+                    folders.append(self.findDirectoryToFreeUpSpace(minimum, f))
+            folders.append(folder)
+        i = 0
+        for f in folders:
+            if i == 0:
+                lowestSize = f.getFolderSizeRecursive()
+                lowestFolder = f
+                i += 1
+            if f.getFolderSizeRecursive() < lowestSize:
+                lowestSize = f.getFolderSizeRecursive()
+                lowestFolder = f
+        if i == 0:
+            return 0
+        return lowestFolder
+
+    def findSmallestDirToDelete(self, totalspace, targetunusedspace):
+        currentusage = self.fs.tree.getFolderSizeRecursive()
+        amount_to_free_up = targetunusedspace - (totalspace - currentusage)
+        folder = self.findDirectoryToFreeUpSpace(amount_to_free_up, self.fs.tree)
+        print(f'{folder.getFolderSizeRecursive()}')
+
     def testFilesystem(self):
         fs = Filsystem()
         fs.changeDir('/')
@@ -265,5 +292,6 @@ class problem71():
 if __name__ == '__main__':
     x = problem71()
     print(f'{x.sumDirectorySizes(100000)}')
+    x.findSmallestDirToDelete(70000000, 30000000)
     #x.testFilesystem()
 
