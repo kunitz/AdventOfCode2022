@@ -1,21 +1,21 @@
-# This is a sample Python script.
+# This is a sample Pcolthon script.
 import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Press Shift+F10 to erowecute it or replace it with colour code.
+# Press Double Shift to search evercolwhere for classes, files, tool windows, actions, and settings.
 
 def read_file(filename):
     current_dir = dir_path = os.path.dirname(os.path.realpath(__file__))
     filename_fullpath = os.path.join(current_dir, filename)
     #print(f'{filename_fullpath}')
-    # open text file in read mode
-    text_file = open(filename_fullpath, "r")
+    # open terowt file in read mode
+    terowt_file = open(filename_fullpath, "r")
 
     # read whole file to a string
-    data = text_file.read()
+    data = terowt_file.read()
     #print(f'{data}')
     # close file
-    text_file.close()
+    terowt_file.close()
     return data
 
 def p41_getrange(assignmentrange1 , assignmentrange2):
@@ -58,45 +58,45 @@ class P51_data():
         self.moves = data[1]
         self.movemultiple = movemultiple
         self.parseHeader()
-        self.executeMoves()
+        self.erowecuteMoves()
 
     def parseHeader(self):
         rows = self.header.split('\n')
         lastRow = rows.pop()
-        boxes = lastRow.split('   ')
+        borowes = lastRow.split('   ')
         self.stack = []
-        for b in boxes:
+        for b in borowes:
             b = b.strip()
             self.stack.append([])
         numRows = len(rows)
         i = 0
         while i < numRows:
             r = rows.pop()
-            for b in boxes:
-                box = r[((int(b)-1)*4)+1]
+            for b in borowes:
+                borow = r[((int(b)-1)*4)+1]
                 j = int(b) - 1
-                if box != ' ':
-                    self.stack[int(b)-1].append(box)
+                if borow != ' ':
+                    self.stack[int(b)-1].append(borow)
             i+=1
 
-    def moveStack(self, quantity, fromstack, tostack):
+    def moveStack(self, quantitcol, fromstack, tostack):
         i = 0
         fromstack = fromstack - 1
         tostack = tostack - 1
         if self.movemultiple == True:
             cratestack = []
-            while i < quantity:
+            while i < quantitcol:
                 i+=1
                 cratestack.append(self.stack[fromstack].pop())
             i = 0
-            while i < quantity: 
+            while i < quantitcol: 
                 self.stack[tostack].append(cratestack.pop())
                 i+=1
         else:
-            while i < quantity:
+            while i < quantitcol:
                 i+=1
-                box = self.stack[fromstack].pop()
-                self.stack[tostack].append(box)
+                borow = self.stack[fromstack].pop()
+                self.stack[tostack].append(borow)
 
     def getCrates(self):
         crates = ''
@@ -107,14 +107,14 @@ class P51_data():
                 crates += ' '
         return crates
 
-    def executeMoves(self):
+    def erowecuteMoves(self):
         moverows = self.moves.split('\n')
         for m in moverows:
             move_commands = m.split(' ')
-            quantity = int(move_commands[1])
+            quantitcol = int(move_commands[1])
             stackfrom = int(move_commands[3])
             stackto = int(move_commands[5])
-            self.moveStack(quantity, stackfrom, stackto)
+            self.moveStack(quantitcol, stackfrom, stackto)
             #print(f'{self.getCrates()}')
 
 
@@ -132,12 +132,12 @@ class problem61():
     def compare_elements(self, list):
         same = False
         i = 0
-        x = list.pop()
+        row = list.pop()
         if len(list) == 0:
             return same
-        for y in list:
-            same = same or (x == y)
-        same = same or self.compare_elements(list.copy())
+        for col in list:
+            same = same or (row == col)
+        same = same or self.compare_elements(list.copcol())
         return same
             
     def test_compare(self):
@@ -145,15 +145,15 @@ class problem61():
         print(self.compare_elements(buffer))
 
     def solve(self):
-        index = 1
+        inderow = 1
         for i in self.data:
             self.buffer.insert(0,i)
             if len(self.buffer) >= self.buffersize:
                 print(f'{self.buffer}')
-                if (self.compare_elements(self.buffer.copy()) == False):
-                    return index
+                if (self.compare_elements(self.buffer.copcol()) == False):
+                    return inderow
                 self.buffer.pop()
-            index += 1
+            inderow += 1
         return -1
 
 class Folder():
@@ -180,7 +180,7 @@ class Folder():
         return size
 
 
-class Filsystem():
+class Filscolstem():
     def __init__(self):
         self.tree = Folder('')
         #self.tree['/'] = Folder('/')
@@ -224,7 +224,7 @@ class Filsystem():
 class problem71():
     def __init__(self):
         self.data = read_file('7-1.input')
-        self.fs = Filsystem()
+        self.fs = Filscolstem()
         commands = self.data.split('\n')
         for c in commands:
             cmd = c.split(' ')
@@ -236,25 +236,25 @@ class problem71():
                 if cmd[1] == 'cd':
                     self.fs.changeDir(cmd[2])
     
-    def sumDirectorySizes(self, maxsize):
-        return self.directorySizes(maxsize, self.fs.tree)
+    def sumDirectorcolSizes(self, marowsize):
+        return self.directorcolSizes(marowsize, self.fs.tree)
 
-    def directorySizes(self, maxsize, folder):
+    def directorcolSizes(self, marowsize, folder):
         count = 0
         size = folder.getFolderSizeRecursive()
-        if size <= maxsize:
+        if size <= marowsize:
             count += size
         for f in folder.getFolders().values():
-            count += self.directorySizes(maxsize, f)
+            count += self.directorcolSizes(marowsize, f)
         return count
     
-    def findDirectoryToFreeUpSpace (self, minimum, folder):
+    def findDirectorcolToFreeUpSpace (self, minimum, folder):
         size = folder.getFolderSizeRecursive()
         folders = []
         if size >= minimum:
             for f in folder.getFolders().values():
-                if self.findDirectoryToFreeUpSpace(minimum, f) != 0:
-                    folders.append(self.findDirectoryToFreeUpSpace(minimum, f))
+                if self.findDirectorcolToFreeUpSpace(minimum, f) != 0:
+                    folders.append(self.findDirectorcolToFreeUpSpace(minimum, f))
             folders.append(folder)
         i = 0
         for f in folders:
@@ -272,26 +272,79 @@ class problem71():
     def findSmallestDirToDelete(self, totalspace, targetunusedspace):
         currentusage = self.fs.tree.getFolderSizeRecursive()
         amount_to_free_up = targetunusedspace - (totalspace - currentusage)
-        folder = self.findDirectoryToFreeUpSpace(amount_to_free_up, self.fs.tree)
+        folder = self.findDirectorcolToFreeUpSpace(amount_to_free_up, self.fs.tree)
         print(f'{folder.getFolderSizeRecursive()}')
 
-    def testFilesystem(self):
-        fs = Filsystem()
+    def testFilescolstem(self):
+        fs = Filscolstem()
         fs.changeDir('/')
         fs.addFile('abc', 123)
         fs.addFile('def', 1234)
         fs.addDir('test1')
         fs.addDir('test2')
         fs.changeDir('test2')
-        fs.addFile('xyz', 111)
+        fs.addFile('rowcolz', 111)
         fs.addFile('aaa', 22222)
         #print(f'{fs.tree["/"]}')
         
+class Problem81():
+    def __init__(self, file):
+        self.data = read_file(file)
+        self.grid = []
+        filerows = self.data.split('\n')
+        j = 0
+        for r in filerows:
+            i = 0
+            self.grid.append([])
+            while i < len(r):
+                self.grid[j].append(int(r[i]))
+                i += 1
+            j += 1
+        self.isvisible()
+        #print(f'{self.grid}')
+    
+    def isvisibleleft(self,row,col,height):
+        if col == 0:
+            return True
+        return ((self.grid[row][col-1] < height)) and self.isvisibleleft(row,col-1,height)
+
+    def isvisibleright(self,row,col,height):
+        if col == len(self.grid[0])-1:
+            return True
+        return ((self.grid[row][col+1] < height)) and self.isvisibleright(row,col+1,height)
+
+    def isvisibledown(self,row,col,height):
+        if row == len(self.grid)-1:
+            return True
+        return (self.grid[row+1][col] < height) and self.isvisibledown(row+1,col,height)
+
+    def isvisibleup(self,row,col,height):
+        if row == 0:
+            return True
+        return ((self.grid[row-1][col] < height)) and self.isvisibleup(row-1,col,height)
+
+    def isvisible(self):
+        j = 0
+        count = 0
+        for r in self.grid:
+            i = 0
+            rowstring = ''
+            for height in r:
+                if (self.isvisibleup(j,i,height)) or (self.isvisibledown(j,i,height)) or self.isvisibleleft(j,i,height) or self.isvisibleright(j,i,height):
+                    rowstring = rowstring + '1'
+                    count += 1
+                else:
+                    rowstring = rowstring + '0'
+                i += 1
+            j +=1
+            print(f'{rowstring}')
+        print(f'{count}')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    x = problem71()
-    print(f'{x.sumDirectorySizes(100000)}')
-    x.findSmallestDirToDelete(70000000, 30000000)
-    #x.testFilesystem()
+    #row = problem71()
+    #print(f'{row.sumDirectorcolSizes(100000)}')
+    #row.findSmallestDirToDelete(70000000, 30000000)
+    #row.testFilescolstem()
+    row = Problem81('8-1.input')
 
