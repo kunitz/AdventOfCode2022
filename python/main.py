@@ -300,8 +300,6 @@ class Problem81():
                 self.grid[j].append(int(r[i]))
                 i += 1
             j += 1
-        self.isvisible()
-        #print(f'{self.grid}')
     
     def isvisibleleft(self,row,col,height):
         if col == 0:
@@ -340,11 +338,57 @@ class Problem81():
             print(f'{rowstring}')
         print(f'{count}')
 
+    def visibletreesleft(self,row,col,height):
+        if col == 0:
+            return 0        
+        if self.grid[row][col-1] >= height:
+            return 1
+        return 1 + self.visibletreesleft(row,col-1,height)
+
+    def visibletreesright(self,row,col,height):
+        if col == (len(self.grid[0]) - 1):
+            return 0
+        if self.grid[row][col+1] >= height:
+            return 1
+        return 1 + self.visibletreesright(row,col+1,height)
+
+    def visibletreesdown(self,row,col,height):
+        if row == len(self.grid) - 1:
+            return 0
+        if self.grid[row+1][col] >= height:
+            return 1
+        return 1 + self.visibletreesdown(row+1,col,height)
+
+    def visibletreesup(self,row,col,height):
+        if row == 0:
+            return 0
+        if self.grid[row-1][col] >= height:
+            return 1
+        return 1 + self.visibletreesup(row-1,col,height)
+
+
+    def calculateScenicScore(self, row, col, height):
+        return self.visibletreesdown(row,col,height) * self.visibletreesleft(row,col,height) * self.visibletreesright(row,col,height) * self.visibletreesup(row,col,height)
+    
+    def calculateMaxScenicScore(self):
+        max_scenic_score = 0
+        j = 0
+        for r in self.grid:
+            i = 0
+            for height in r:
+                scenic_score = self.calculateScenicScore(j,i,height)
+                max_scenic_score = max(max_scenic_score, scenic_score)
+                i += 1
+            j +=1
+        print(f'{max_scenic_score}')
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #row = problem71()
     #print(f'{row.sumDirectorcolSizes(100000)}')
     #row.findSmallestDirToDelete(70000000, 30000000)
     #row.testFilescolstem()
-    row = Problem81('8-1.input')
+    #Problem81('8-1.input').isvisible()
+    Problem81('8-1.input').calculateMaxScenicScore()
 
