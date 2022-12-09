@@ -382,6 +382,134 @@ class Problem81():
             j +=1
         print(f'{max_scenic_score}')
 
+class P91map():
+    def __init__(self):
+        self.Head = self.Object(0,0)
+        self.Tail = self.Object(0,0)
+        self.Map = dict({0:dict({0:self.Cell(1)})})
+        self.minx = 0
+        self.maxx = 0
+        self.miny = 0
+        self.maxy = 0
+
+    def make_move(self, direction, distance):
+        print(f'{direction}, {distance}')
+        i = 0
+        while i < distance:
+            self.MoveHead(direction)
+            self.MoveTail()
+            i+=1
+            pass
+
+    def UpdateMap(self, x, y, count_tail = 0):
+        if (x not in self.Map):
+            self.Map[x] = dict({y:self.Cell(count_tail)})
+        elif (y not in self.Map[x]):
+            self.Map[x][y] = self.Cell(count_tail)
+        else:
+            cell = self.Map[x][y]
+            cell.update_tailcount(count_tail)
+        if x < self.minx:
+            self.minx = x
+        if x > self.maxx:
+            self.maxx = x
+        if y < self.miny:
+            self.miny = y
+        if y > self.maxy:
+            self.maxy = y
+
+    def MoveHead(self, direction):
+        if direction == 'U':
+            self.Head.y = self.Head.y + 1
+        if direction == "R":
+            self.Head.x = self.Head.x + 1
+        if direction == "L":
+            self.Head.x = self.Head.x - 1
+        if direction == 'D':
+            self.Head.y = self.Head.y - 1
+        self.UpdateMap(self.Head.x,self.Head.y)
+
+    def MoveTail(self):
+        if (abs(self.Head.y - self.Tail.y) > 1) or (abs(self.Head.x - self.Tail.x) > 1):
+            if (self.Tail.y - self.Head.y) != 0:
+                if (self.Tail.y - self.Head.y) > 0:
+                    self.Tail.y = self.Tail.y - 1
+                else:
+                    self.Tail.y = self.Tail.y + 1
+            if (self.Tail.x - self.Head.x) != 0:
+                if (self.Tail.x - self.Head.x) > 0:
+                    self.Tail.x = self.Tail.x - 1
+                else:
+                    self.Tail.x = self.Tail.x + 1
+        self.UpdateMap(self.Tail.x,self.Tail.y,1)
+
+    def PrintMap(self):
+        y = self.maxy
+        print('--------')
+        while (y >= self.miny):
+            row = ''
+            x = self.minx
+            while x <= self.maxx:
+                cell_char = '.'
+                if (y in self.Map[x]):
+                    cell_char = str(self.Map[x][y].get_count_tail())
+                if x == 0 and y == 0:
+                    cell_char = 's'
+                if (self.Tail.x == x) and (self.Tail.y == y):
+                    cell_char = 'T'
+                if (self.Head.x == x) and (self.Head.y == y):
+                    cell_char = "H"
+                row = row + cell_char
+                x += 1
+            y -= 1
+            print(f'{row}')
+        print('--------')
+
+    def count_locations(self):
+        y = self.maxy
+        count_tail = 0
+        while (y >= self.miny):
+            x = self.minx
+            while x <= self.maxx:
+                if (y in self.Map[x]):
+                    if self.Map[x][y].get_count_tail() > 0:
+                        count_tail += 1
+                x += 1
+            y -= 1
+        print(f'Tail Locations: {count_tail}')
+
+
+    class Cell():
+        def __init__(self, initial_count = 0):
+            self.count_tail = initial_count
+
+        def update_tailcount(self, count_tail):
+            self.count_tail += count_tail
+
+        def get_count_tail(self):
+            return self.count_tail
+
+    class Object():
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+
+class P91():
+    def __init__(self, file):
+        self.data = read_file(file)
+        self.map = P91map()
+        self.moves = []
+        for r in self.data.split('\n'):
+            move = r.split(' ')
+            self.moves.append(dict({'direction': move[0],'distance': int(move[1])}))
+        
+    def run(self):
+        for move in self.moves:
+            self.map.make_move(move['direction'], move['distance'])
+        self.map.PrintMap()
+        self.map.count_locations()
+            
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -390,5 +518,6 @@ if __name__ == '__main__':
     #row.findSmallestDirToDelete(70000000, 30000000)
     #row.testFilescolstem()
     #Problem81('8-1.input').isvisible()
-    Problem81('8-1.input').calculateMaxScenicScore()
+    #Problem81('8-1.input').calculateMaxScenicScore()
+    P91('9-1.input').run()
 
