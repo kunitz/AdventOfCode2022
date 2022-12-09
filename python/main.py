@@ -383,9 +383,15 @@ class Problem81():
         print(f'{max_scenic_score}')
 
 class P91map():
-    def __init__(self):
-        self.Head = self.Object(0,0)
-        self.Tail = self.Object(0,0)
+    def __init__(self, num_knots = 1):
+        self.Knots = []
+        self.Knots.append(self.Object(0,0))
+        i = 0
+        while i < num_knots:
+            self.Knots.append(self.Object(0,0))
+            i+=1
+        #self.Head = self.Object(0,0)
+        #self.Tail = self.Object(0,0)
         self.Map = dict({0:dict({0:self.Cell(1)})})
         self.minx = 0
         self.maxx = 0
@@ -397,18 +403,21 @@ class P91map():
         i = 0
         while i < distance:
             self.MoveHead(direction)
-            self.MoveTail()
+            knotindex = 1
+            while knotindex < len(self.Knots):
+                self.MoveTail(knotindex)
+                knotindex += 1
+            self.Map[self.Knots[len(self.Knots)-1].x][self.Knots[len(self.Knots)-1].y].update_tailcount(1)
             i+=1
             pass
 
-    def UpdateMap(self, x, y, count_tail = 0):
+    def UpdateMap(self, x, y):
         if (x not in self.Map):
-            self.Map[x] = dict({y:self.Cell(count_tail)})
+            self.Map[x] = dict({y:self.Cell(0)})
         elif (y not in self.Map[x]):
-            self.Map[x][y] = self.Cell(count_tail)
+            self.Map[x][y] = self.Cell(0)
         else:
             cell = self.Map[x][y]
-            cell.update_tailcount(count_tail)
         if x < self.minx:
             self.minx = x
         if x > self.maxx:
@@ -420,28 +429,28 @@ class P91map():
 
     def MoveHead(self, direction):
         if direction == 'U':
-            self.Head.y = self.Head.y + 1
+            self.Knots[0].y = self.Knots[0].y + 1
         if direction == "R":
-            self.Head.x = self.Head.x + 1
+            self.Knots[0].x = self.Knots[0].x + 1
         if direction == "L":
-            self.Head.x = self.Head.x - 1
+            self.Knots[0].x = self.Knots[0].x - 1
         if direction == 'D':
-            self.Head.y = self.Head.y - 1
-        self.UpdateMap(self.Head.x,self.Head.y)
+            self.Knots[0].y = self.Knots[0].y - 1
+        self.UpdateMap(self.Knots[0].x,self.Knots[0].y)
 
-    def MoveTail(self):
-        if (abs(self.Head.y - self.Tail.y) > 1) or (abs(self.Head.x - self.Tail.x) > 1):
-            if (self.Tail.y - self.Head.y) != 0:
-                if (self.Tail.y - self.Head.y) > 0:
-                    self.Tail.y = self.Tail.y - 1
+    def MoveTail(self, i):
+        if (abs(self.Knots[i-1].y - self.Knots[i].y) > 1) or (abs(self.Knots[i-1].x - self.Knots[i].x) > 1):
+            if (self.Knots[i].y - self.Knots[i-1].y) != 0:
+                if (self.Knots[i].y - self.Knots[i-1].y) > 0:
+                    self.Knots[i].y = self.Knots[i].y - 1
                 else:
-                    self.Tail.y = self.Tail.y + 1
-            if (self.Tail.x - self.Head.x) != 0:
-                if (self.Tail.x - self.Head.x) > 0:
-                    self.Tail.x = self.Tail.x - 1
+                    self.Knots[i].y = self.Knots[i].y + 1
+            if (self.Knots[i].x - self.Knots[i-1].x) != 0:
+                if (self.Knots[i].x - self.Knots[i-1].x) > 0:
+                    self.Knots[i].x = self.Knots[i].x - 1
                 else:
-                    self.Tail.x = self.Tail.x + 1
-        self.UpdateMap(self.Tail.x,self.Tail.y,1)
+                    self.Knots[i].x = self.Knots[i].x + 1
+        self.UpdateMap(self.Knots[i].x,self.Knots[i].y)
 
     def PrintMap(self):
         y = self.maxy
@@ -452,12 +461,16 @@ class P91map():
             while x <= self.maxx:
                 cell_char = '.'
                 if (y in self.Map[x]):
-                    cell_char = str(self.Map[x][y].get_count_tail())
+                    if self.Map[x][y].get_count_tail():
+                        cell_char = 'X'
                 if x == 0 and y == 0:
                     cell_char = 's'
-                if (self.Tail.x == x) and (self.Tail.y == y):
-                    cell_char = 'T'
-                if (self.Head.x == x) and (self.Head.y == y):
+                i = 1
+                while i < len(self.Knots):
+                    if (self.Knots[i].x == x) and (self.Knots[i].y == y):
+                        cell_char = str(i)
+                    i += 1
+                if (self.Knots[0].x == x) and (self.Knots[0].y == y):
                     cell_char = "H"
                 row = row + cell_char
                 x += 1
@@ -472,7 +485,7 @@ class P91map():
             x = self.minx
             while x <= self.maxx:
                 if (y in self.Map[x]):
-                    if self.Map[x][y].get_count_tail() > 0:
+                    if self.Map[x][y].get_count_tail():
                         count_tail += 1
                 x += 1
             y -= 1
@@ -484,10 +497,11 @@ class P91map():
             self.count_tail = initial_count
 
         def update_tailcount(self, count_tail):
-            self.count_tail += count_tail
+            if count_tail == 1:
+                self.count_tail = 1
 
         def get_count_tail(self):
-            return self.count_tail
+            return self.count_tail > 0
 
     class Object():
         def __init__(self, x, y):
@@ -497,7 +511,7 @@ class P91map():
 class P91():
     def __init__(self, file):
         self.data = read_file(file)
-        self.map = P91map()
+        self.map = P91map(9)
         self.moves = []
         for r in self.data.split('\n'):
             move = r.split(' ')
