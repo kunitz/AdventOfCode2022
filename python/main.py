@@ -522,8 +522,77 @@ class P91():
             self.map.make_move(move['direction'], move['distance'])
         self.map.PrintMap()
         self.map.count_locations()
-            
 
+class CPU():
+    def __init__(self, commands):
+        self.commands = commands
+        self.registerx_history = []
+        self.registerx = 1
+        self.cycle = 0
+        self.current_rowcycle = 0
+
+    def update_cycle(self):
+        if (self.current_rowcycle <= self.registerx + 1) and (self.current_rowcycle >= self.registerx - 1):
+            print('#', end="")
+        else:
+            print('.', end="")
+        self.registerx_history.append(self.registerx)
+        self.cycle += 1
+        if self.current_rowcycle == 39:
+            self.current_rowcycle = 0
+            print('')
+        else:
+            self.current_rowcycle += 1
+        pass
+
+    def process_command(self, command, value):
+        if command == 'addx':
+            self.update_cycle()
+            self.update_cycle()
+            self.registerx = self.registerx + value
+        if command == 'noop':
+            self.update_cycle()
+
+    def get_signal_strength(self, cycle):
+            return self.registerx_history[cycle-1] * cycle
+
+    def run(self):
+        for cmd in self.commands:
+            if len(cmd) == 1:
+                value = 0
+            else:
+                value = int(cmd[1])
+            self.process_command(cmd[0], value)
+
+    def print_commands(self):
+        for cmd in self.commands:
+            print(f'{cmd[0]}', end="")
+            if len(cmd) > 1:
+                print(f',{cmd[1]}')
+            else:
+                print("")
+
+
+class P10_1():
+    def __init__(self, file):
+        self.data = read_file(file)
+        self.commands = []
+        for r in self.data.split('\n'):
+            cmd = r.split(' ')
+            self.commands.append(cmd)
+        self.cpu = CPU(self.commands)
+
+
+    def print_commands(self):
+        self.cpu.print_commands()
+
+    def run10_1(self):
+        self.cpu.run()
+        cycles = [20,60,100,140,180,220]
+        signal_strengths = 0
+        for c in cycles:
+            signal_strengths = signal_strengths + self.cpu.get_signal_strength(c)
+        print(f'{signal_strengths}')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -533,5 +602,5 @@ if __name__ == '__main__':
     #row.testFilescolstem()
     #Problem81('8-1.input').isvisible()
     #Problem81('8-1.input').calculateMaxScenicScore()
-    P91('9-1.input').run()
+    P10_1('10-1.input').run10_1()
 
