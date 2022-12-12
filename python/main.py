@@ -1,5 +1,6 @@
 # This is a sample Pcolthon script.
 import os
+import P11
 
 # Press Shift+F10 to erowecute it or replace it with colour code.
 # Press Double Shift to search evercolwhere for classes, files, tool windows, actions, and settings.
@@ -594,6 +595,7 @@ class P10_1():
             signal_strengths = signal_strengths + self.cpu.get_signal_strength(c)
         print(f'{signal_strengths}')
 
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #row = problem71()
@@ -602,5 +604,6 @@ if __name__ == '__main__':
     #row.testFilescolstem()
     #Problem81('8-1.input').isvisible()
     #Problem81('8-1.input').calculateMaxScenicScore()
-    P10_1('10-1.input').run10_1()
+    #P10_1('10-1.input').run10_1()
+    P11.run()
 
