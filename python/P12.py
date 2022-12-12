@@ -33,29 +33,38 @@ class Node():
                 links_to_check.append(l)
         self.indexed = True
         if self.row == endnode[0] and self.col == endnode[1]:
-            return []
+            #return []
+            pass
         else:
             return links_to_check
 
 class Map():
-    def __init__(self, maptext, part2=False):
+    def __init__(self, maptext, part2_count=-1):
         self.map = []
         y = 0
+        self.count_a = 0
         for r in maptext.split('\n'):
             x = 0
             self.map.append([])
             for i in r:
                 if i == 'S':
-                    self.start = [y,x]
-                    i = 'a'
+                    if part2_count < 0:
+                        self.start = [y,x]
+                    i = 'a'               
+                if i == 'a':
+                    if self.count_a == part2_count:
+                        self.start = [y,x]
+                    self.count_a += 1
                 if i == 'E':
                     self.end = [y,x]
                     i = 'z'
                 self.map[y].append(Node(i, y, x))
                 x += 1
             y += 1
+        if part2_count > self.count_a:
+            raise Exception("Count is beyond number of a's")
         self.index_nodes()
-    
+
     def index_nodes(self):
         for r in self.map:
             for i in r:
@@ -66,7 +75,8 @@ class Map():
             link = links.pop(0)
             links_to_append = link.check_distance(self.end, False)
             if link.row == self.end[0] and link.col == self.end[1]:
-                links = []
+                #links = []
+                pass
             else:
                 for l in links_to_append:
                     links.append(l)
@@ -84,13 +94,11 @@ class Map():
                 print(f'{len(i.links)}', end="")
             print("")
 
-    def print_distance(self):
-        for r in self.map:
-            for i in r:
-                txt = "{:4d}"
-                #print(txt.format(i.distance), end="")
-            #print("")
-        print(f'Distance to end: {str(self.map[self.end[0]][self.end[1]].distance)}')
+    def get_distance(self):
+        if self.map[self.end[0]][self.end[1]].distance >= 0:
+            #print(f'Distance to end: {str(self.map[self.end[0]][self.end[1]].distance)}')
+            pass
+        return self.map[self.end[0]][self.end[1]].distance
 
     def test(self):
         self.printmap()
@@ -103,9 +111,20 @@ class Map():
 
 
 def Run():
-    map = Map(AoC_Shared.read_file('12-1.input'))
+    running = True
+    i = 0
+    min_distance = 500
+    while running:        
+        try:
+            map = Map(AoC_Shared.read_file('12-1.input'), i)
+            if map.get_distance() >= 0:
+                if map.get_distance() < min_distance:
+                    min_distance = map.get_distance()
+            print(f'Iteration: {i}, Min Distance: {min_distance}', end='\r')
+        except:
+            running = False
+        i += 1
     #map.test()
-    map.print_distance()
 
 if __name__ == '__main__':
     Run()
